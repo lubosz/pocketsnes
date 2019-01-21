@@ -1132,9 +1132,9 @@ void SettingsMenuUpdateText(s32 menu_index)
 					case 2:
 						strcpy(mMenuText[SETTINGS_MENU_FULLSCREEN],"Video scaling            SMOOTH");
 						break;  
-					// case 3:
-					// 	strcpy(mMenuText[SETTINGS_MENU_FULLSCREEN],"Full screen:          HARDWARE");
-					// 	break;
+					case 3:
+						strcpy(mMenuText[SETTINGS_MENU_FULLSCREEN],"Video scaling          HARDWARE");
+						break;
 				}
 			
 		case SETTINGS_MENU_LOAD_GLOBAL_SETTINGS:
@@ -1455,14 +1455,13 @@ s32 SettingsMenu(void)
 				case SETTINGS_MENU_FULLSCREEN:
 					if (keys & SAL_INPUT_RIGHT)
 					{
-						mMenuOptions->fullScreen = (mMenuOptions->fullScreen + 1) % 3;
+						mMenuOptions->fullScreen++;
+						if(mMenuOptions->fullScreen > 3) mMenuOptions->fullScreen = 0;
 					}
 					else
 					{
-						if (mMenuOptions->fullScreen == 0)
-							mMenuOptions->fullScreen = 2;
-						else
-							mMenuOptions->fullScreen--;
+						mMenuOptions->fullScreen--;
+						if(mMenuOptions->fullScreen > 3) mMenuOptions->fullScreen = 3;
 					}
 					SettingsMenuUpdateText(SETTINGS_MENU_FULLSCREEN);
 					break;
