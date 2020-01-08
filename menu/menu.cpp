@@ -37,6 +37,7 @@ static u16 mTempFb[SNES_WIDTH*SNES_HEIGHT_EXTENDED*2];
 
 static char errormsg[MAX_DISPLAY_CHARS];
 
+extern volatile bool argv_rom_loaded;
 extern "C" void S9xSaveSRAM(int showWarning);
 
 void DefaultMenuOptions(void)
@@ -1005,6 +1006,9 @@ void MainMenuUpdateText(s32 menu_index)
 {
 	switch(menu_index)
 	{
+		case MENU_ROM_SELECT:
+			strcpy(mMenuText[MENU_ROM_SELECT],"Select ROM");
+			break;
 		case SAVESTATE_MENU_LOAD:
 			strcpy(mMenuText[SAVESTATE_MENU_LOAD],"Load state");
 			break;
@@ -1020,11 +1024,6 @@ void MainMenuUpdateText(s32 menu_index)
 		case MENU_SETTINGS:
 			strcpy(mMenuText[MENU_SETTINGS],"Settings");
 			break;
-#ifndef NO_ROM_BROWSER
-		case MENU_ROM_SELECT:
-			strcpy(mMenuText[MENU_ROM_SELECT],"Select ROM");
-			break;
-#endif
 	}
 }
 
@@ -1175,9 +1174,7 @@ void MainMenuUpdateTextAll(void)
 	MainMenuUpdateText(SAVESTATE_MENU_LOAD);
 	MainMenuUpdateText(SAVESTATE_MENU_SAVE);
 	MainMenuUpdateText(MENU_RESET_GAME);
-#ifndef NO_ROM_BROWSER
 	MainMenuUpdateText(MENU_ROM_SELECT);
-#endif
 	MainMenuUpdateText(MENU_SETTINGS);
 	MainMenuUpdateText(MENU_EXIT_APP);
 }
@@ -1492,6 +1489,9 @@ s32 MenuRun(s8 *romName)
 		return action;
 	}
 
+	if (argv_rom_loaded)
+		menuCount = MENU_COUNT - 1;
+
 #if 0
 	if((mMenuOptions->autoSaveSram) && (mRomName[0]!=0))
 	{
@@ -1528,7 +1528,6 @@ s32 MenuRun(s8 *romName)
 
 			switch(menufocus)
 			{
-#ifndef NO_ROM_BROWSER
 				case MENU_ROM_SELECT:
 					subaction=FileSelect();
 					if (subaction==1)
@@ -1539,7 +1538,6 @@ s32 MenuRun(s8 *romName)
 						menuExit=1;
 					}
 					break;
-#endif
 				case SAVESTATE_MENU_LOAD:
 					subaction=SaveStateSelect(SAVESTATE_MODE_LOAD);
 					if(subaction==100)
