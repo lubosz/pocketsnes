@@ -2,7 +2,7 @@
 
 TARGET = ./dist/PocketSNES.dge
 
-CHAINPREFIX := /opt/rs97-toolchain-musl
+CHAINPREFIX := /opt/mipsel-linux-uclibc
 CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
 
 CC  := $(CROSS_COMPILE)gcc
@@ -25,7 +25,7 @@ CFLAGS += -fno-common -Wno-write-strings -Wno-sign-compare -ffast-math -ftree-ve
 CFLAGS += -funswitch-loops -fno-strict-aliasing
 CFLAGS += -DMIPS_XBURST -DFAST_LSB_WORD_ACCESS -DNO_ROM_BROWSER
 # CFLAGS += -fprofile-generate -fprofile-dir=/mnt/int_sd/profile
-CFLAGS += -fprofile-use
+# CFLAGS += -fprofile-use
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti -fno-math-errno -fno-threadsafe-statics
 
@@ -45,6 +45,18 @@ all : $(TARGET)
 $(TARGET) : $(OBJS)
 	$(CMD)$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
+ipk: $(TARGET)
+	@rm -rf /tmp/.pocketsnes-ipk/ && mkdir -p /tmp/.pocketsnes-ipk/root/home/retrofw/emus/pocketsnes /tmp/.pocketsnes-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.pocketsnes-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
+	@cp dist/PocketSNES.dge dist/PocketSNES.man.txt dist/PocketSNES.png dist/backdrop.png /tmp/.pocketsnes-ipk/root/home/retrofw/emus/pocketsnes
+	@cp dist/pocketsnes.lnk /tmp/.pocketsnes-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
+	@cp dist/snes.pocketsnes.lnk /tmp/.pocketsnes-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
+	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" dist/control > /tmp/.pocketsnes-ipk/control
+	@cp dist/conffiles /tmp/.pocketsnes-ipk/
+	@tar --owner=0 --group=0 -czvf /tmp/.pocketsnes-ipk/control.tar.gz -C /tmp/.pocketsnes-ipk/ control conffiles
+	@tar --owner=0 --group=0 -czvf /tmp/.pocketsnes-ipk/data.tar.gz -C /tmp/.pocketsnes-ipk/root/ .
+	@echo 2.0 > /tmp/.pocketsnes-ipk/debian-binary
+	@ar r dist/pocketsnes.ipk /tmp/.pocketsnes-ipk/control.tar.gz /tmp/.pocketsnes-ipk/data.tar.gz /tmp/.pocketsnes-ipk/debian-binary
+
 %.o: %.c
 	$(CMD)$(CC) $(CFLAGS) -c $< -o $@
 
@@ -54,4 +66,4 @@ $(TARGET) : $(OBJS)
 .PHONY : clean
 clean :
 	$(CMD)rm -f $(OBJS) $(TARGET)
-	$(CMD)rm -rf .opk_data $(TARGET).opk
+	$(CMD)rm -rf .opk_data $(TARGET).opk dist/pocketsnes.ipk
