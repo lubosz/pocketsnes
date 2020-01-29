@@ -160,7 +160,7 @@ s32 MenuMessageBox(const char *message1, const char *message2,
   sal_InputIgnore();
   while(subaction==-1)
   {
-     keys=sal_InputPollRepeat();
+     keys=sal_InputPollRepeat(0);
      if (keys & SAL_INPUT_UP)
      {
        select=SAL_OK; // Up
@@ -460,7 +460,7 @@ s32 FileSelect()
 	sal_InputIgnore();
 	while (menuExit==0)
 	{
-		keys=sal_InputPollRepeat();
+		keys=sal_InputPollRepeat(0);
 
 		if (keys & INP_BUTTON_MENU_SELECT)
 		{
@@ -752,7 +752,7 @@ static s32 SaveStateSelect(s32 mode)
 
 	while (action!=0&&action!=100)
 	{
-		keys=sal_InputPollRepeat();
+		keys=sal_InputPollRepeat(0);
 
 		if(keys&SAL_INPUT_UP || keys&SAL_INPUT_LEFT) {saveno--; action=1;}
 		if(keys&SAL_INPUT_DOWN || keys&SAL_INPUT_RIGHT) {saveno++; action=1;}
@@ -980,7 +980,7 @@ void ShowCredits()
 	sal_InputIgnore();
 	while (!menuExit)
 	{
-		keys=sal_InputPollRepeat();
+		keys=sal_InputPollRepeat(0);
 
 		if (keys & SAL_INPUT_UP) menufocus--; // Up
 		if (keys & SAL_INPUT_DOWN) menufocus++; // Down
@@ -1256,7 +1256,7 @@ s32 SettingsMenu(void)
 		RenderMenu("Settings", menuCount,menuSmooth,menufocus);
 		sal_VideoFlip(1);
 
-		keys=sal_InputPollRepeat();
+		keys=sal_InputPollRepeat(0);
 
 		if (keys & INP_BUTTON_MENU_CANCEL)
 		{
@@ -1267,7 +1267,7 @@ s32 SettingsMenu(void)
 				RenderMenu("Settings", menuCount,menuSmooth,menufocus);
 				sal_VideoFlip(1);
 
-				keys=sal_InputPoll();
+				keys=sal_InputPoll(0);
 			}
 
 			menuExit=1;
@@ -1281,7 +1281,7 @@ s32 SettingsMenu(void)
 				RenderMenu("Settings", menuCount,menuSmooth,menufocus);
 				sal_VideoFlip(1);
 
-				keys=sal_InputPoll();
+				keys=sal_InputPoll(0);
 			}
 
 			switch(menufocus)
@@ -1518,7 +1518,7 @@ s32 MenuRun(s8 *romName)
 		RenderMenu("Main Menu", menuCount,menuSmooth,menufocus);
 		sal_VideoFlip(1);
 
-		keys=sal_InputPollRepeat();
+		keys=sal_InputPollRepeat(0);
 
 		if (keys & INP_BUTTON_MENU_SELECT)
 		{
@@ -1529,7 +1529,7 @@ s32 MenuRun(s8 *romName)
 				RenderMenu("Main Menu", menuCount,menuSmooth,menufocus);
 				sal_VideoFlip(1);
 
-				keys=sal_InputPoll();
+				keys=sal_InputPoll(0);
 
 				usleep(10000);
 			}
