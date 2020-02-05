@@ -139,11 +139,11 @@ u32 sal_VideoInit(u32 bpp)
     SDL_DOUBLEBUF
 #endif
 	);
-	// mScreen = SDL_CreateRGBSurface(SDL_SWSURFACE, SAL_SCREEN_WIDTH, SAL_SCREEN_HEIGHT, 16, 0, 0, 0, 0);
+
 	//If there was an error in setting up the screen
 	if( mScreen == NULL )
 	{
-	sal_LastErrorSet("SDL_SetVideoMode failed");        	
+	sal_LastErrorSet("SDL_SetVideoMode failed");
 	return SAL_ERROR;
 	}
 
@@ -176,8 +176,7 @@ void sal_VideoEnterGame(u32 fullscreenOption, u32 pal, u32 refreshRate)
 		Width = SAL_SCREEN_WIDTH;
 		Height = SAL_SCREEN_HEIGHT;
 	}
-	if (SDL_MUSTLOCK(mScreen))
-		SDL_UnlockSurface(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_UnlockSurface(mScreen);
 	mScreen = SDL_SetVideoMode(Width, Height, mBpp, SDL_HWSURFACE |
 #ifdef SDL_TRIPLEBUF
 		SDL_TRIPLEBUF
@@ -186,8 +185,7 @@ void sal_VideoEnterGame(u32 fullscreenOption, u32 pal, u32 refreshRate)
 #endif
 		);
 	mRefreshRate = refreshRate;
-	if (SDL_MUSTLOCK(mScreen))
-		SDL_LockSurface(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_LockSurface(mScreen);
 #endif
 }
 
@@ -202,11 +200,9 @@ void sal_VideoSetPAL(u32 fullscreenOption, u32 pal)
 void sal_VideoExitGame()
 {
 #ifdef GCW_ZERO
-	if (SDL_MUSTLOCK(mScreen))
-		SDL_UnlockSurface(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_UnlockSurface(mScreen);
 	mScreen = SDL_SetVideoMode(SAL_SCREEN_WIDTH, SAL_SCREEN_HEIGHT, mBpp, SDL_HWSURFACE | SDL_DOUBLEBUF);
-	if (SDL_MUSTLOCK(mScreen))
-		SDL_LockSurface(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_LockSurface(mScreen);
 #endif
 }
 
@@ -221,26 +217,20 @@ void sal_VideoBitmapDim(u16* img, u32 pixelCount)
 
 void sal_VideoFlip(s32 vsync)
 {
-	if (SDL_MUSTLOCK(mScreen)) {
-		SDL_UnlockSurface(mScreen); 
-		SDL_Flip(mScreen);
-		SDL_LockSurface(mScreen);
-	} else
-		SDL_Flip(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_UnlockSurface(mScreen);
+	SDL_Flip(mScreen);
+	if (SDL_MUSTLOCK(mScreen)) SDL_LockSurface(mScreen);
 }
-
 
 void *sal_VideoGetBuffer()
 {
 	return (void*)mScreen->pixels;
 }
 
-// }
+void sal_VideoPaletteSync()
+{
 
-void sal_VideoPaletteSync() 
-{ 	
-	
-} 
+}
 
 void sal_VideoPaletteSet(u32 index, u32 color)
 {
@@ -259,7 +249,7 @@ int mainEntry(int argc, char *argv[]);
 
 // Prove entry point wrapper
 int main(int argc, char *argv[])
-{	
+{
 	return mainEntry(argc,argv);
 //	return mainEntry(argc-1,&argv[1]);
 }
